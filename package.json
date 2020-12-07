@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/analuciachin/tinyapp/issues"
   },
-  "homepage": "https://github.com/analuciachin/tinyapp#readme"
+  "homepage": "https://github.com/analuciachin/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
