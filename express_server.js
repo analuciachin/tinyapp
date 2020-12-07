@@ -11,21 +11,36 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-function generateRandomString() {
-  app.post("/urls", (req, res) => {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
+// function generateRandomString() {
+//   app.post("/urls", (req, res) => {
+//     let result = '';
+//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//     const charactersLength = characters.length;
   
-    for ( let i = 0; i < 6; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
+//     for ( let i = 0; i < 6; i++ ) {
+//       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+//     }
   
-    console.log(result);
-    console.log(req.body);  // Log the POST request body to the console
-    res.send("200 OK");         // Respond with 'Ok' (we will replace this)
-  });
-}
+//     console.log(result);
+//     console.log(req.body);  // Log the POST request body to the console
+//     res.send("200 OK");         // Respond with 'Ok' (we will replace this)
+//   });
+// }
+
+app.post("/urls", (req, res) => {
+  let shortURL = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+
+  for ( let i = 0; i < 6; i++ ) {
+    shortURL += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(req.body);
+  console.log(urlDatabase);  // Log the POST request body to the console
+  res.send("200 OK");         // Respond with 'Ok' (we will replace this)
+});
 
 app.get("/", (req, res) => {
   res.send("Hello!");
