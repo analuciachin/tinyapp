@@ -12,8 +12,16 @@
     </div>
   </nav>
 
-  <form action="/login" method="POST">
-    <input type="text" name="username" placeholder="username">
-    <button class="btn btn-primary" type="submit">Submit</button>
-  </form>
+  <% if (username) { %>
+    <form class="ml-3 mt-3 mb-3" action="/logout" method="POST">
+      <p>Username (_header.ejs): <%= username %></p>
+      <button class="btn btn-primary" type="submit">Logout</button>
+    </form>
+  <% } else { %>
+    <form class="ml-3 mt-3 mb-3" action="/login" method="POST">
+      <h3>Login</h3>
+      <input type="text" name="username" placeholder="username">
+      <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+  <% } %>
 </header>
