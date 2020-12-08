@@ -12,10 +12,6 @@ const urlDatabase = {
 };
 
 function generateRandomString() {
-
-}
-
-app.post("/urls", (req, res) => {
   let shortURL = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
@@ -23,6 +19,13 @@ app.post("/urls", (req, res) => {
   for ( let i = 0; i < 6; i++ ) {
     shortURL += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
+
+  return shortURL;
+}
+
+app.post("/urls", (req, res) => {
+
+  const shortURL = generateRandomString();
 
   urlDatabase[shortURL] = req.body.longURL;
   //console.log(req.body);
@@ -36,8 +39,14 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  console.log(req.params);
+  res.redirect(longURL);
 });
 
 // app.get("/", (req, res) => {
