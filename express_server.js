@@ -36,6 +36,19 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  console.log('shortURL', shortURL);
+  delete urlDatabase[shortURL];
+
+  res.redirect("/urls");
+});
+
+app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -51,18 +64,15 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-// app.get("/", (req, res) => {
-//   res.send("Hello!");
-// });
+app.get("/", (req, res) => {
+  res.send("Hello!");
+});
 
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);
 // });
 
-// app.get("/urls", (req, res) => {
-//   const templateVars = { urls: urlDatabase };
-//   res.render("urls_index", templateVars);
-// });
+
 
 // app.get("/hello", (req, res) => {
 //   const templateVars = { greeting: 'Hello World!' };
