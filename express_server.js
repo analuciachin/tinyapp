@@ -109,7 +109,7 @@ app.post("/login", (req,res) => {
 
 app.post("/logout", (req,res) => {
   res.clearCookie('user_id');
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 
@@ -136,6 +136,9 @@ app.post("/register", (req, res) => {
 
 app.get("/urls", (req, res) => {
 
+  if (!req.cookies.user_id) {
+    res.redirect("/login");
+  }
   let userLogged;
   for (const user in users) {
     if (user === req.cookies.user_id) {
@@ -147,18 +150,27 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
+  if (!req.cookies.user_id) {
+    res.redirect("/login");
+  }
   console.log('req.cookies', req.cookies);
   const templateVars = { user: users[req.cookies.user_id] };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  if (!req.cookies.user_id) {
+    res.redirect("/login");
+  }
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username, user: users[req.cookies.user_id] };
   
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  if (!req.cookies.user_id) {
+    res.redirect("/login");
+  }
   const longURL = urlDatabase[req.params.shortURL];
   console.log(req.params);
   res.redirect(longURL);
