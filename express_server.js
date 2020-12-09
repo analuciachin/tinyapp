@@ -98,7 +98,7 @@ app.post("/login", (req,res) => {
 
 app.post("/logout", (req,res) => {
   res.clearCookie('username');
-  res.redirect("urls");
+  res.redirect("/urls");
 });
 
 
@@ -154,9 +154,14 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { username: req.cookies.username, user: req.cookies.user };
+  const templateVars = { username: req.cookies.username, user: users[req.cookies.user_id] };
   res.render('register', templateVars);
-})
+});
+
+app.get("/login", (req,res) => {
+  const templateVars = { user: users[req.cookies.user_id] };
+  res.render('login', templateVars);
+});
 
 app.get("/", (req, res) => {
   res.send("Hello!");

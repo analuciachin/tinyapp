@@ -11,20 +11,15 @@
       </div>
     </div>
 
-
+   
     <% if (user) { %>
-      <form class="ml-3 mt-3 mb-3" action="/logout" method="POST">
-        <p>Email (_header.ejs): <%= user.email %></p>
+      <form action="/logout" method="POST">
         <button class="btn btn-primary" type="submit">Logout</button>
       </form>
-    <% } else { %>
-      <form class="ml-3 mt-3 mb-3" action="/login" method="POST">
-        <input type="text" name="username" placeholder="username">
-        <button class="btn btn-primary" type="submit">Login</button>
-      </form>
-    <% } %>
-
-
+     <% } else { %>
+      <a href="/register">Register</a>
+      <a href="/login">Login</a>
+     <% } %>
   </nav>
 
 
