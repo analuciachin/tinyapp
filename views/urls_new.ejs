@@ -15,7 +15,7 @@
     <%- include('partials/_header') %>
 
     <main style="margin: 1em;">
-      <p class="mt-5 mb-3">Username (urls_new.ejs): <%= username %></p>
+      <p class="mt-5 mb-3">Email (urls_new.ejs): <%= user.email %></p>
       <h3>Create TinyURL</h3>
       <form class="form-inline" action="/urls" method="POST">
         <div class="form-group mb-2">

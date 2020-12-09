@@ -13,6 +13,21 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "ask29t": {
+    id: "ask29t", 
+    email: "heythere@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "tgR45W": {
+    id: "tgR45W", 
+    email: "bootcamp@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
+
+
 
 // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function generateRandomString() {
@@ -32,9 +47,7 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
 
   urlDatabase[shortURL] = req.body.longURL;
-  //console.log(req.body);
   console.log(urlDatabase);
-  //res.send("200 OK");
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -59,6 +72,8 @@ app.post("/login", (req,res) => {
   const username = req.body.username;
   console.log(username);
   res.cookie('username', username);
+  //const userId = req.cookies;
+  //console.log(userId)
 
   res.redirect("/urls");
 });
@@ -68,19 +83,40 @@ app.post("/logout", (req,res) => {
   res.redirect("urls");
 });
 
+
+app.post("/register", (req, res) => {
+  const userId = generateRandomString();
+  users[userId] = {};
+  users[userId].id = userId;
+  users[userId].email = req.body.email;
+  users[userId].password = req.body.password;
+  //console.log(users);
+
+  res.cookie('user_id', userId);
+  res.redirect("/urls");
+});
+
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies.username };
+
+  let userLogged;
+  for (const user in users) {
+    if (user === req.cookies.user_id) {
+      userLogged = users[user];
+    }
+  }
+  const templateVars = { urls: urlDatabase, username: userLogged.id, user: userLogged };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies.username };
+  console.log('req.cookies', req.cookies);
+  const templateVars = { username: req.cookies.username, user: users[req.cookies.user_id] };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username };
-  console.log('cookies', req.cookies.username);
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.username, user: users[req.cookies.user_id] };
+  
   res.render("urls_show", templateVars);
 });
 
@@ -91,7 +127,7 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { username: req.cookies.username };
+  const templateVars = { username: req.cookies.username, user: req.cookies.user };
   res.render('register', templateVars);
 })
 
