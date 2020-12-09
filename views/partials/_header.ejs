@@ -14,11 +14,12 @@
    
     <% if (user) { %>
       <form action="/logout" method="POST">
+        <p>Logged In As: <%= user.email %>!<p>
         <button class="btn btn-primary" type="submit">Logout</button>
       </form>
      <% } else { %>
-      <a href="/register">Register</a>
-      <a href="/login">Login</a>
+      <a href="/register" class="ml-5 mr-5" style="font-size: 20px;">Register</a>
+      <a href="/login" class="ml-5 mr-5" style="font-size: 20px;">Login</a>
      <% } %>
   </nav>
 

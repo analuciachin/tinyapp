@@ -14,14 +14,22 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <!-- <p class="mt-5 mb-3">Username (register.ejs): <%= username %></p> -->
-      <h3>Register</h3>
+      <h3>Create Account</h3>
       <form class="form-inline" action="/register" method="POST">
         <div class="form-group mb-2">
-          <label for="email">Email:</label>
-          <input class="form-control" type="email" name="email" placeholder="Enter your email" style="width: 300px; margin: 1em">
-          <label for="password">Password:</label>
-          <input class="form-control" type="password" name="password" placeholder="Enter your password" style="width: 300px; margin: 1em">
-          <button type="submit" class="btn btn-primary">Register</button>
+          <ul class="list-unstyled mt-5">
+            <li>
+              <p style="font-size: 20px;">Email:</p>
+              <input class="form-control" type="email" name="email" placeholder="Enter your email" style="width: 300px; margin: 1em">
+            </li>
+            <li>
+              <p style="font-size: 20px;">Password:</p>
+              <input class="form-control" type="password" name="password" placeholder="Enter your password" style="width: 300px; margin: 1em">
+            </li>
+            <li>
+              <button type="submit" class="btn btn-primary">Register</button>
+            </li>
+          </ul>
         </div>
       </form>
     </main>
