@@ -23,6 +23,11 @@ const users = {
     id: "tgR45W", 
     email: "bootcamp@example.com", 
     password: "dishwasher-funk"
+  },
+  "aE309p": {
+    id: "aE309p", 
+    email: "myemail@example.com", 
+    password: "i-am-tired"
   }
 };
 
@@ -40,6 +45,19 @@ function generateRandomString() {
   }
 
   return shortURL;
+}
+
+
+function isEmailInDb (email, db) {
+  for (const user in db) {
+    for (const item in db[user]) {
+     // console.log(db[user].email, email)
+      if (db[user].email === email) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 app.post("/urls", (req, res) => {
@@ -86,14 +104,23 @@ app.post("/logout", (req,res) => {
 
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
-  users[userId] = {};
-  users[userId].id = userId;
-  users[userId].email = req.body.email;
-  users[userId].password = req.body.password;
-  //console.log(users);
+  if (req.body.email === '' || req.body.password === '') {
+    //console.log(users);
+    res.send('404');
+  } else if (isEmailInDb(req.body.email, users)) {
+    //console.log(users);
+    res.send('400');
+  } else {
+    users[userId] = {};
+    users[userId].id = userId;
+    users[userId].email = req.body.email;
+    users[userId].password = req.body.password;
+    
+    //console.log(users);
+    res.cookie('user_id', userId);
+    res.redirect("/urls");
+  }
 
-  res.cookie('user_id', userId);
-  res.redirect("/urls");
 });
 
 app.get("/urls", (req, res) => {
