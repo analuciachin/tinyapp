@@ -87,13 +87,29 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/login", (req,res) => {
-  const username = req.body.username;
-  console.log(username);
-  res.cookie('username', username);
-  //const userId = req.cookies;
-  //console.log(userId)
+  
+  //console.log(req.body);
+  if (!isEmailInDb(req.body.email, users)) {
+    res.send('403');
+  } else if (isEmailInDb(req.body.email, users)) {
+    for (const user in users) {
+      for (const item in users[user]) {
+        if (users[user].email === req.body.email) {
+          if (users[user].password !== req.body.password) {
+            res.send('403');
+          } else {
+            res.cookie("user_id", users[user].id);
+            res.redirect("/urls");
+          }
+        }
+      }
+    }
+  }
 
-  res.redirect("/urls");
+  //res.cookie('username', username);
+
+
+  //res.redirect("/urls");
 });
 
 app.post("/logout", (req,res) => {
