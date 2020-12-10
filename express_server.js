@@ -2,7 +2,7 @@ const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser");
-const { getUserByEmail, generateRandomString } = require("./helpers");
+const { getUserByEmail, generateRandomString, urlsForUser } = require("./helpers");
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -42,29 +42,6 @@ const users = {
   }
 };
 
-
-
-
-
-
-
-
-function urlsForUser(id, db) {
-  let userUrls = {};
-
-  for (const url in db) {
-    for (const user in db[url]) {
-      //console.log('urlsForUser function 1 ', urlDatabase[url].userID, id);
-      //console.log('urlsForUser function 2 ', urlDatabase[url].longURL);
-      if (db[url].userID === id) {
-        userUrls[url] = {};
-        userUrls[url].longURL = db[url].longURL;
-        userUrls[url].userID = db[url].userID
-      } 
-    }
-  }
-  return userUrls;
-}
 
 app.post("/urls", (req, res) => {
 

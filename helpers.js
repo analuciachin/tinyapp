@@ -24,7 +24,23 @@ function generateRandomString() {
 }
 
 
+// show to the user only his own urls
+function urlsForUser(id, db) {
+  let userUrls = {};
 
-module.exports = { getUserByEmail, generateRandomString }
-//module.exports = generateRandomString
-//module.exports = urlsForUser
+  for (const url in db) {
+    for (const user in db[url]) {
+      //console.log('urlsForUser function 1 ', urlDatabase[url].userID, id);
+      //console.log('urlsForUser function 2 ', urlDatabase[url].longURL);
+      if (db[url].userID === id) {
+        userUrls[url] = {};
+        userUrls[url].longURL = db[url].longURL;
+        userUrls[url].userID = db[url].userID
+      } 
+    }
+  }
+  return userUrls;
+}
+
+
+module.exports = { getUserByEmail, generateRandomString, urlsForUser }
