@@ -1,12 +1,9 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const bodyParser = require("body-parser");
-const getUserByEmail = require("./helpers");
-const generateRandomString = require("./helpers");
-const urlsForUser = require("./helpers");
 const app = express();
 const PORT = 8080; // default port 8080
+const bodyParser = require("body-parser");
 const saltRounds = 10;
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -44,6 +41,50 @@ const users = {
 };
 
 
+
+
+// https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+function generateRandomString() {
+  let shortURL = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+
+  for ( let i = 0; i < 6; i++ ) {
+    shortURL += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return shortURL;
+}
+
+
+function isEmailInDb (email, db) {
+  for (const user in db) {
+    for (const item in db[user]) {
+     // console.log(db[user].email, email)
+      if (db[user].email === email) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function urlsForUser(id) {
+  let userUrls = {};
+
+  for (const url in urlDatabase) {
+    for (const user in urlDatabase[url]) {
+      //console.log('urlsForUser function 1 ', urlDatabase[url].userID, id);
+      //console.log('urlsForUser function 2 ', urlDatabase[url].longURL);
+      if (urlDatabase[url].userID === id) {
+        userUrls[url] = {};
+        userUrls[url].longURL = urlDatabase[url].longURL;
+        userUrls[url].userID = urlDatabase[url].userID
+      } 
+    }
+  }
+  return userUrls;
+}
 
 app.post("/urls", (req, res) => {
 
@@ -91,9 +132,9 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req,res) => {
   
   //console.log(req.body);
-  if (!getUserByEmail(req.body.email, users)) {
+  if (!isEmailInDb(req.body.email, users)) {
     res.send('403');
-  } else if (getUserByEmail(req.body.email, users)) {
+  } else if (isEmailInDb(req.body.email, users)) {
     for (const user in users) {
       for (const item in users[user]) {
         if (users[user].email === req.body.email) {
@@ -123,7 +164,7 @@ app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     //console.log(users);
     res.send('404');
-  } else if (getUserByEmail(req.body.email, users)) {
+  } else if (isEmailInDb(req.body.email, users)) {
     //console.log(users);
     res.send('400');
   } else {
@@ -151,7 +192,7 @@ app.get("/urls", (req, res) => {
       }
     }
     
-    const templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase), user: userLogged };
+    const templateVars = { urls: urlsForUser(req.session.user_id), user: userLogged };
     res.render("urls_index", templateVars);
   }
  
