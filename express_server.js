@@ -43,51 +43,8 @@ const users = {
 };
 
 
-app.post("/urls", (req, res) => {
 
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = {};
-  urlDatabase[shortURL].longURL = req.body.longURL;
-  urlDatabase[shortURL].userID = req.session.user_id;
-  console.log('POST /urls ', urlDatabase);
-  res.redirect(`/urls/${shortURL}`);
-});
-
-app.post("/urls/:shortURL/delete", (req, res) => {
-  const shortURL = req.params.shortURL;
-  console.log('POST /urls/:shortURL/delete 1 ', shortURL);
-
-  console.log(urlDatabase[shortURL].userID);
-
-  if (urlDatabase[shortURL].userID === req.session.user_id) {
-    delete urlDatabase[shortURL];
-    res.redirect("/urls");
-  } else {
-    res.send('403');
-  }
-
-});
-
-app.post("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL;
-  console.log('POST /urls/:shortURL 1 ', shortURL);
-
-  if (urlDatabase[shortURL].userID === req.session.user_id) {
-    urlDatabase[shortURL] = {};
-    urlDatabase[shortURL].longURL = req.body.long_url;
-    urlDatabase[shortURL].userID = req.session.user_id;
-
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id] };
-
-    res.render("urls_show", templateVars);
-  } else {
-    res.send('403');
-  }
-
-});
-
-app.post("/login", (req,res) => {
-  
+app.post("/login", (req,res) => { 
   //console.log(req.body);
   let userInfo;
   if (!getUserByEmail(req.body.email, users)) {
@@ -131,8 +88,62 @@ app.post("/register", (req, res) => {
 
 });
 
-app.get("/urls", (req, res) => {
+app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = {};
+  urlDatabase[shortURL].longURL = req.body.longURL;
+  urlDatabase[shortURL].userID = req.session.user_id;
+  console.log('POST /urls ', urlDatabase);
+  res.redirect(`/urls/${shortURL}`);
+});
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  console.log('POST /urls/:shortURL/delete 1 ', shortURL);
+
+  console.log(urlDatabase[shortURL].userID);
+
+  if (urlDatabase[shortURL].userID === req.session.user_id) {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  } else {
+    res.send('403');
+  }
+});
+
+app.post("/urls/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  console.log('POST /urls/:shortURL 1 ', shortURL);
+
+  if (urlDatabase[shortURL].userID === req.session.user_id) {
+    urlDatabase[shortURL] = {};
+    urlDatabase[shortURL].longURL = req.body.long_url;
+    urlDatabase[shortURL].userID = req.session.user_id;
+
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id] };
+
+    res.render("urls_show", templateVars);
+  } else {
+    res.send('403');
+  }
+});
+
+
+
+
+
+app.get("/register", (req, res) => {
+  const templateVars = { user: users[req.session.user_id] };
+  res.render('register', templateVars);
+});
+
+app.get("/login", (req,res) => {
+  const templateVars = { user: users[req.session.user_id] };
+  res.render('login', templateVars);
+});
+
+
+app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/login");
   } else {
@@ -146,7 +157,6 @@ app.get("/urls", (req, res) => {
     const templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase), user: userLogged };
     res.render("urls_index", templateVars);
   }
- 
 });
 
 app.get("/urls/new", (req, res) => {
@@ -174,52 +184,11 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.get("/register", (req, res) => {
-  const templateVars = { user: users[req.session.user_id] };
-  res.render('register', templateVars);
-});
 
-app.get("/login", (req,res) => {
-  const templateVars = { user: users[req.session.user_id] };
-  res.render('login', templateVars);
-});
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
+// app.get("/", (req, res) => {
+//   res.send("Hello!");
 // });
-
-
-
-// app.get("/hello", (req, res) => {
-//   const templateVars = { greeting: 'Hello World!' };
-//   res.render("hello_world", templateVars);
-// });
-
-
-
-// app.get("/urls/:shortURL", (req, res) => {
-//   const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL };
-//   res.render("urls_show", templateVars);
-// });
-
-// app.post("/urls", (req, res) => {
-//   console.log(req.body);  // Log the POST request body to the console
-//   res.send("Ok");         // Respond with 'Ok' (we will replace this)
-// });
-
-
-// app.get("/set", (req, res) => {
-//   const a = 1;
-//   res.send(`a = ${a}`);
-//  });
- 
-//  app.get("/fetch", (req, res) => {
-//   res.send(`a = ${a}`);
-//  });
  
 
 app.listen(PORT, () => {
