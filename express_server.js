@@ -61,13 +61,12 @@ function generateRandomString() {
 function getUserByEmail (email, db) {
   for (const user in db) {
     for (const item in db[user]) {
-     // console.log(db[user].email, email)
       if (db[user].email === email) {
-        return true;
+        //console.log('db[user] ', db[user]);
+        return db[user];
       }
     }
   }
-  return false;
 }
 
 function urlsForUser(id, db) {
@@ -133,23 +132,17 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req,res) => {
   
   //console.log(req.body);
+  let userInfo;
   if (!getUserByEmail(req.body.email, users)) {
     res.send('403');
   } else if (getUserByEmail(req.body.email, users)) {
-    for (const user in users) {
-      for (const item in users[user]) {
-        if (users[user].email === req.body.email) {
-          console.log('1st password ', users[user].password);
-          console.log('2nd password ', req.body.password);
-          console.log('3rd password ', bcrypt.hashSync(req.body.password, saltRounds));
-          if (!bcrypt.compareSync(req.body.password, users[user].password)) {
-            res.send('403');
-          } else {
-            req.session.user_id = users[user].id;
-            res.redirect("/urls");
-          }
-        }
-      }
+    userInfo = getUserByEmail(req.body.email, users);
+    console.log('userInfo ', userInfo.password);
+    if (!bcrypt.compareSync(req.body.password, userInfo.password)) {
+      res.send('403');
+    } else {
+      req.session.user_id = userInfo.id;
+      res.redirect("/urls");
     }
   }
 });
