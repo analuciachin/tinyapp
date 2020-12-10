@@ -1,8 +1,10 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+const saltRounds = 10;
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -19,17 +21,17 @@ const users = {
   "ask29t": {
     id: "ask29t", 
     email: "heythere@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
   },
  "tgR45W": {
     id: "tgR45W", 
     email: "bootcamp@example.com", 
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", saltRounds)
   },
   "aE309p": {
     id: "aE309p", 
     email: "myemail@example.com", 
-    password: "i-am-tired"
+    password: bcrypt.hashSync("i-am-tired", saltRounds)
   }
 };
 
@@ -99,7 +101,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   } else {
-    res.send('Error!');
+    res.send('403');
   }
 
 });
@@ -117,7 +119,7 @@ app.post("/urls/:shortURL", (req, res) => {
 
     res.render("urls_show", templateVars);
   } else {
-    res.send('Error!');
+    res.send('403');
   }
 
 });
@@ -131,7 +133,10 @@ app.post("/login", (req,res) => {
     for (const user in users) {
       for (const item in users[user]) {
         if (users[user].email === req.body.email) {
-          if (users[user].password !== req.body.password) {
+          console.log('1st password ', users[user].password);
+          console.log('2nd password ', req.body.password);
+          console.log('3rd password ', bcrypt.hashSync(req.body.password, saltRounds));
+          if (!bcrypt.compareSync(req.body.password, users[user].password)) {
             res.send('403');
           } else {
             res.cookie("user_id", users[user].id);
@@ -161,7 +166,7 @@ app.post("/register", (req, res) => {
     users[userId] = {};
     users[userId].id = userId;
     users[userId].email = req.body.email;
-    users[userId].password = req.body.password;
+    users[userId].password = bcrypt.hashSync(req.body.password, saltRounds);
     
     console.log('POST /register ', users);
     res.cookie('user_id', userId);
