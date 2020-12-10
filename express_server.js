@@ -1,9 +1,10 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const bodyParser = require("body-parser");
 const app = express();
 const PORT = 8080; // default port 8080
-const bodyParser = require("body-parser");
+
 const saltRounds = 10;
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -56,8 +57,8 @@ function generateRandomString() {
   return shortURL;
 }
 
-
-function isEmailInDb (email, db) {
+// isEmailInDb
+function getUserByEmail (email, db) {
   for (const user in db) {
     for (const item in db[user]) {
      // console.log(db[user].email, email)
@@ -69,17 +70,17 @@ function isEmailInDb (email, db) {
   return false;
 }
 
-function urlsForUser(id) {
+function urlsForUser(id, db) {
   let userUrls = {};
 
-  for (const url in urlDatabase) {
-    for (const user in urlDatabase[url]) {
+  for (const url in db) {
+    for (const user in db[url]) {
       //console.log('urlsForUser function 1 ', urlDatabase[url].userID, id);
       //console.log('urlsForUser function 2 ', urlDatabase[url].longURL);
-      if (urlDatabase[url].userID === id) {
+      if (db[url].userID === id) {
         userUrls[url] = {};
-        userUrls[url].longURL = urlDatabase[url].longURL;
-        userUrls[url].userID = urlDatabase[url].userID
+        userUrls[url].longURL = db[url].longURL;
+        userUrls[url].userID = db[url].userID
       } 
     }
   }
@@ -132,9 +133,9 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req,res) => {
   
   //console.log(req.body);
-  if (!isEmailInDb(req.body.email, users)) {
+  if (!getUserByEmail(req.body.email, users)) {
     res.send('403');
-  } else if (isEmailInDb(req.body.email, users)) {
+  } else if (getUserByEmail(req.body.email, users)) {
     for (const user in users) {
       for (const item in users[user]) {
         if (users[user].email === req.body.email) {
@@ -164,7 +165,7 @@ app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     //console.log(users);
     res.send('404');
-  } else if (isEmailInDb(req.body.email, users)) {
+  } else if (getUserByEmail(req.body.email, users)) {
     //console.log(users);
     res.send('400');
   } else {
@@ -192,7 +193,7 @@ app.get("/urls", (req, res) => {
       }
     }
     
-    const templateVars = { urls: urlsForUser(req.session.user_id), user: userLogged };
+    const templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase), user: userLogged };
     res.render("urls_index", templateVars);
   }
  
