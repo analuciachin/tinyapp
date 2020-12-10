@@ -2,7 +2,7 @@ const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser");
-const getUserByEmail = require("./helpers");
+const { getUserByEmail, generateRandomString } = require("./helpers");
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -45,18 +45,7 @@ const users = {
 
 
 
-// https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-function generateRandomString() {
-  let shortURL = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
 
-  for ( let i = 0; i < 6; i++ ) {
-    shortURL += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  return shortURL;
-}
 
 
 

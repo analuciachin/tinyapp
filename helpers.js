@@ -10,6 +10,21 @@ function getUserByEmail (email, db) {
 }
 
 
-module.exports = getUserByEmail
+// https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+function generateRandomString() {
+  let shortURL = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+
+  for ( let i = 0; i < 6; i++ ) {
+    shortURL += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return shortURL;
+}
+
+
+
+module.exports = { getUserByEmail, generateRandomString }
 //module.exports = generateRandomString
 //module.exports = urlsForUser
