@@ -10,7 +10,9 @@ app.set("view engine", "ejs");
 
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "ask29t" },
-  "9sm5xK": { longURL: "http://www.google.com", userID: "tgR45W" }
+  "9sm5xK": { longURL: "http://www.google.com", userID: "tgR45W" },
+  "34Trw5": { longURL: "https://stackoverflow.com/", userID: "aE309p" },
+  "kBC544": { longURL: "https://www.ctvnews.ca/", userID: "tgR45W" },
 };
 
 const users = { 
@@ -58,6 +60,23 @@ function isEmailInDb (email, db) {
     }
   }
   return false;
+}
+
+function urlsForUser(id) {
+  let userUrls = {};
+
+  for (const url in urlDatabase) {
+    for (const user in urlDatabase[url]) {
+      console.log('line 68 ', urlDatabase[url].userID, id);
+      console.log(urlDatabase[url].longURL);
+      if (urlDatabase[url].userID === id) {
+        userUrls[url] = {};
+        userUrls[url].longURL = urlDatabase[url].longURL;
+        userUrls[url].userID = urlDatabase[url].userID
+      } 
+    }
+  }
+  return userUrls;
 }
 
 app.post("/urls", (req, res) => {
@@ -143,15 +162,20 @@ app.get("/urls", (req, res) => {
 
   if (!req.cookies.user_id) {
     res.redirect("/login");
-  }
-  let userLogged;
-  for (const user in users) {
-    if (user === req.cookies.user_id) {
-      userLogged = users[user];
+  } else {
+    let userLogged;
+    for (const user in users) {
+      if (user === req.cookies.user_id) {
+        userLogged = users[user];
+      }
     }
+  
+    //urlsForUser(req.cookies.user_id);
+    
+    const templateVars = { urls: urlsForUser(req.cookies.user_id), user: userLogged };
+    res.render("urls_index", templateVars);
   }
-  const templateVars = { urls: urlDatabase, user: userLogged };
-  res.render("urls_index", templateVars);
+ 
 });
 
 app.get("/urls/new", (req, res) => {
