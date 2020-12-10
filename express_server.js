@@ -2,6 +2,7 @@ const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser");
+const getUserByEmail = require("./helpers");
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -57,17 +58,7 @@ function generateRandomString() {
   return shortURL;
 }
 
-// isEmailInDb
-function getUserByEmail (email, db) {
-  for (const user in db) {
-    for (const item in db[user]) {
-      if (db[user].email === email) {
-        //console.log('db[user] ', db[user]);
-        return db[user];
-      }
-    }
-  }
-}
+
 
 function urlsForUser(id, db) {
   let userUrls = {};
