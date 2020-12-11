@@ -121,6 +121,13 @@ app.post("/urls/:shortURL", (req, res) => {
 
 
 
+app.get("/", (req, res) => {
+  if (!req.session.user_id) {
+    res.redirect("/login");
+  } else {
+    res.redirect("/urls");
+  }
+});
 
 app.get("/register", (req, res) => {
   const templateVars = { user: users[req.session.user_id] };
