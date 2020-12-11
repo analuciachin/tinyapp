@@ -1,8 +1,8 @@
+// check if user is in DB
 function getUserByEmail (email, db) {
   for (const user in db) {
     for (const item in db[user]) {
       if (db[user].email === email) {
-        //console.log('db[user] ', db[user]);
         return db[user];
       }
     }
@@ -30,8 +30,6 @@ function urlsForUser(id, db) {
 
   for (const url in db) {
     for (const user in db[url]) {
-      //console.log('urlsForUser function 1 ', urlDatabase[url].userID, id);
-      //console.log('urlsForUser function 2 ', urlDatabase[url].longURL);
       if (db[url].userID === id) {
         userUrls[url] = {};
         userUrls[url].longURL = db[url].longURL;
