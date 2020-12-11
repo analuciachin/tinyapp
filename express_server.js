@@ -173,11 +173,15 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/login");
-  }
-
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, username: req.session.username, user: users[req.session.user_id] };
+  } else if (!urlDatabase[req.params.shortURL]) {
+    const error = "Short URL does not exist. Try again!"
+    const templateVars1 = { error: error }
+    res.render("error", templateVars1);
+  } else {
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, username: req.session.username, user: users[req.session.user_id] };
   
-  res.render("urls_show", templateVars);
+    res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
