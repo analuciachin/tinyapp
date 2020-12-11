@@ -42,7 +42,9 @@ const users = {
   }
 };
 
-
+/* -------------------------- */
+/* POST REQUESTS
+/* -------------------------- */
 
 app.post("/login", (req,res) => { 
   let userInfo;
@@ -129,6 +131,9 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 
+/* -------------------------- */
+/* GET REQUESTS
+/* -------------------------- */
 
 
 app.get("/", (req, res) => {
@@ -162,7 +167,7 @@ app.get("/urls", (req, res) => {
         userLogged = users[user];
       }
     }
-    
+    //urlsForUser return only the urls owned by user   
     const templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase), user: userLogged };
     res.render("urls_index", templateVars);
   }
@@ -205,7 +210,3 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-
-
-
-// GET /urls/:id - if user is logged in and owns the URL for the given ID: returns HTML with: the short URL (for the given ID) -> the url on the page links directly to the webpage instead of localhost:8080/u/:id. As a user they wouldn't be able to copy this and share it with others as it is the full url and not a shortened link.
