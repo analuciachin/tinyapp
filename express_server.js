@@ -68,9 +68,15 @@ app.post("/logout", (req,res) => {
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
   if (req.body.email === '' || req.body.password === '') {
-    res.send('404');
+    const error = "Email and/or password are empty. Please try again!";
+    const templateVars = { error: error };
+    res.render("error", templateVars);
+
   } else if (getUserByEmail(req.body.email, users)) {
-    res.send('400');
+    const error1 = "Email already exists. Please go to the login page or use another email address."
+    const templateVars1 = { error: error1 }
+    res.render("error", templateVars1);
+
   } else {
     users[userId] = {};
     users[userId].id = userId;
