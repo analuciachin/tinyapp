@@ -172,14 +172,20 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
-    res.redirect("/login");
-  } else if (!urlDatabase[req.params.shortURL]) {
-    const error = "Short URL does not exist. Try again!"
-    const templateVars1 = { error: error }
+    //res.redirect("/login");
+    const error1 = "You are not logged in. Please login."
+    const templateVars1 = { error: error1 }
     res.render("error", templateVars1);
+  } else if (!urlDatabase[req.params.shortURL]) {
+    const error2 = "Short URL does not exist. Try again!"
+    const templateVars2 = { error: error2 }
+    res.render("error", templateVars2);
+  } else if (urlDatabase[req.params.shortURL].userID !== req.session.user_id) {
+    const error3 = "You do not own this URL and cannot access it."
+    const templateVars3 = { error: error3 }
+    res.render("error", templateVars3);
   } else {
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, username: req.session.username, user: users[req.session.user_id] };
-  
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id] };
     res.render("urls_show", templateVars);
   }
 });
@@ -193,3 +199,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+
+
+// GET /urls/:id - if user is logged in and owns the URL for the given ID: returns HTML with: the short URL (for the given ID) -> the url on the page links directly to the webpage instead of localhost:8080/u/:id. As a user they wouldn't be able to copy this and share it with others as it is the full url and not a shortened link.
