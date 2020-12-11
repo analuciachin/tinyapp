@@ -47,11 +47,15 @@ const users = {
 app.post("/login", (req,res) => { 
   let userInfo;
   if (!getUserByEmail(req.body.email, users)) {
-    res.send('403');
+    const error = "Email does not exist. Please verify it!";
+    const templateVars1 = { error: error };
+    res.render("error", templateVars1);
   } else if (getUserByEmail(req.body.email, users)) {
     userInfo = getUserByEmail(req.body.email, users);
     if (!bcrypt.compareSync(req.body.password, userInfo.password)) {
-      res.send('403');
+      const error2 = "Invalid password. Plase try again!";
+      const templateVars2 = { error: error2 };
+    res.render("error", templateVars2);
     } else {
       req.session.user_id = userInfo.id;
       res.redirect("/urls");
@@ -148,7 +152,9 @@ app.get("/login", (req,res) => {
 
 app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
-    res.redirect("/login");
+    const error1 = "You are not logged in. Please login."
+    const templateVars1 = { error: error1 }
+    res.render("error", templateVars1);
   } else {
     let userLogged;
     for (const user in users) {
@@ -172,7 +178,6 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
-    //res.redirect("/login");
     const error1 = "You are not logged in. Please login."
     const templateVars1 = { error: error1 }
     res.render("error", templateVars1);
